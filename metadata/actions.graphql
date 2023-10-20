@@ -1,0 +1,39 @@
+type Mutation {
+  Register(
+    fname: String!
+    lname: String!
+    email: String!
+    username: String!
+    password: String!
+  ): mes
+}
+
+type Mutation {
+  fileUpload(
+    name: String!
+    type: String!
+    base64str: String!
+  ): fileoutput
+}
+
+type Mutation {
+  login(
+    email: String!
+    username: String!
+    password: String!
+  ): tokens
+}
+
+type mes {
+  message: String!
+}
+
+type tokens {
+  accessToken: String
+  message: String
+}
+
+type fileoutput {
+  file_path: String!
+}
+

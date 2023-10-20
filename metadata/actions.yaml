@@ -1,0 +1,124 @@
+actions:
+  - name: Register
+    definition:
+      kind: synchronous
+      handler: http://localhost:2001/api/users
+      request_transform:
+        body:
+          action: transform
+          template: "{\n  \n  \"fname\":{{$body.input.fname}},\n  \"lname\":{{$body.input.lname}},\n  \"email\": {{$body.input.email}},\n  \"username\": {{$body.input.username}},\n  \"password\": {{$body.input.password}}\n}"
+        template_engine: Kriti
+        version: 2
+      response_transform:
+        body:
+          action: transform
+          template: |-
+            {{ if $response.status == 200}}
+            {
+              "message":{{$body.message}}
+            }
+            {{ elif $response.status == 400}}
+            {
+              "message":{{$body.message}}
+            }
+            {{ elif $response.status == 500}}
+            {
+              "message":{{$body.error}}
+            }
+            {{ else}}
+            {
+              "error":"internal error"
+            }
+            {{end}}
+        template_engine: Kriti
+        version: 2
+    permissions:
+      - role: anonymous
+      - role: user
+  - name: fileUpload
+    definition:
+      kind: synchronous
+      handler: http://localhost:2001/api/fileupload
+      request_transform:
+        body:
+          action: transform
+          template: |-
+            {
+             "input":{
+              "name": {{$body.input.name}},
+              "password": {{$body.input.type}},
+              "base64str":{{$body.input.base64str}}
+             }
+            }
+        template_engine: Kriti
+        version: 2
+      response_transform:
+        body:
+          action: transform
+          template: |-
+            {{ if $response.status == 200}}
+            {
+              "file_path":{{$body.file_path}}
+            }
+            {{elif $response.status == 400}}
+            {
+              "message":{{$body.errors}}
+            }
+            {{else}}
+            {
+              "messsage":"interenal"
+            }
+            {{end}}
+        template_engine: Kriti
+        version: 2
+    permissions:
+      - role: user
+  - name: login
+    definition:
+      kind: synchronous
+      handler: http://localhost:2001/api/auth/login
+      request_transform:
+        body:
+          action: transform
+          template: |2
+              {
+                "email":{{$body.input.email}},
+                "username": {{$body.input.username}},
+                "password": {{$body.input.password}}
+              }
+        template_engine: Kriti
+        version: 2
+      response_transform:
+        body:
+          action: transform
+          template: |-
+            {{if $response.status == 200}}
+            {
+              "accessToken":{{$body.accessToken}}
+            }
+            {{elif $response.status == 401}}
+            {
+              "message":{{$body.error}}
+            }
+            {{elif $response.status == 400}}
+            {
+              "message":{{$body.message}}
+            }
+            {{else}}
+            {
+              "message":"interna error"
+            }
+            {{end}}
+        template_engine: Kriti
+        version: 2
+    permissions:
+      - role: anonymous
+      - role: user
+custom_types:
+  enums: []
+  input_objects: []
+  objects:
+    - name: mes
+    - name: tokens
+    - name: fileoutput
+  scalars: []
